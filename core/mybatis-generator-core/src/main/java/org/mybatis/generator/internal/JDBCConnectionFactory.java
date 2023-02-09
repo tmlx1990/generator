@@ -1,5 +1,5 @@
 /*
- *    Copyright 2006-2020 the original author or authors.
+ *    Copyright 2006-2023 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import oracle.jdbc.driver.OracleConnection;
 import org.mybatis.generator.api.ConnectionFactory;
 import org.mybatis.generator.config.JDBCConnectionConfiguration;
 
@@ -87,6 +88,10 @@ public class JDBCConnectionFactory implements ConnectionFactory {
             throw new SQLException(getString("RuntimeError.7")); //$NON-NLS-1$
         }
 
+        // add by tmlx1990 如果为Oracle，则增加读取remark
+        if (driverClass.contains("oracle")) {
+            ((OracleConnection)conn).setRemarksReporting(true);
+        }
         return conn;
     }
 
