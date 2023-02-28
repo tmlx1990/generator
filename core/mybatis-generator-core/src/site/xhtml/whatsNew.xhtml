@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-       Copyright 2006-2022 the original author or authors.
+       Copyright 2006-2023 the original author or authors.
 
        Licensed under the Apache License, Version 2.0 (the "License");
        you may not use this file except in compliance with the License.
        You may obtain a copy of the License at
 
-          http://www.apache.org/licenses/LICENSE-2.0
+          https://www.apache.org/licenses/LICENSE-2.0
 
        Unless required by applicable law or agreed to in writing, software
        distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,27 @@
 </head>
 <body>
 <h1>What's New in MyBatis Generator</h1>
+<h2>Version 1.4.2</h2>
+
+<h3>Enhancements</h3>
+<ul>
+  <li>The generator now uses annotations from the "jakarta" namespace in favor over the "javax" namespace. This is
+    recommended for JDK 9+. If you prefer to use the "javax" annotations, there is a new property on the
+    &lt;commentGenerator&gt; element that will override this behavior.
+  </li>
+  <li>The Maven plugin now includes an integration with Eclipse Maven support. If you import a Maven project with the 
+    generator configured into an Eclipse workspace, the code generator will run automatically.
+  </li>
+  <li>Added an "info" logging level to the log abstraction. Also removed the broken Maven logging implementation.
+      Logging should now work as expected in Maven - Maven ships with the SLF4J simple logger in the classpath, so
+      configuring logging in Maven will always use the SLF simple logger.
+  </li>
+  <li>Added a new plugin method "shouldGenerate" that can be used to provide fine-grained filtering of tables in a
+      context. Also added a new "IgnoreViewsPlugin" that filters out table type VIEW
+  </li>
+</ul>
+
+
 <h2>Version 1.4.1</h2>
 <p>This release is primarily focused on updating the runtimes for MyBatis Dynamic SQL ("MyBatis3DynamicSQL" and
 "MyBatis3Kotlin"). The generated code for "MyBatis3DynamicSQL" is now dependent on MyBatis Dynamic SQL version 1.3.1 or

@@ -1,11 +1,11 @@
 /*
- *    Copyright 2006-2020 the original author or authors.
+ *    Copyright 2006-2023 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
@@ -79,7 +79,7 @@ public class SqlScriptRunner {
 
         try {
             Class<?> driverClass = ObjectFactory.externalClassForName(driver);
-            Driver theDriver = (Driver) driverClass.newInstance();
+            Driver theDriver = (Driver) driverClass.getDeclaredConstructor().newInstance();
 
             Properties properties = new Properties();
             if (userid != null) {
@@ -114,10 +114,8 @@ public class SqlScriptRunner {
             throw new MojoExecutionException("SqlException: " + e.getMessage(), e);
         } catch (IOException e) {
             throw new MojoExecutionException("IOException: " + e.getMessage(), e);
-        } catch (InstantiationException e) {
-            throw new MojoExecutionException("InstantiationException: " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            throw new MojoExecutionException("IllegalAccessException: " + e.getMessage());
+        } catch (ReflectiveOperationException e) {
+            throw new MojoExecutionException("ReflectiveOperationException: " + e.getMessage());
         } finally {
             closeConnection(connection);
         }

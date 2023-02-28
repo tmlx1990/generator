@@ -1,11 +1,11 @@
 /*
- *    Copyright 2006-2020 the original author or authors.
+ *    Copyright 2006-2022 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
@@ -324,6 +324,141 @@ class KotlinTypeTest {
 
         assertThat(renderedType).isEqualToNormalizingNewlines("""
             |class Adder : Serializable
+            """.trimMargin())
+    }
+
+    @Test
+    fun testDataClassWithCompanionObjectAndConstVal() {
+        val obj = KotlinType.newClass("Adder")
+            .withModifier(KotlinModifier.DATA)
+            .withConstructorProperty(KotlinProperty.newVal("a")
+                .withDataType("Int")
+                .build())
+            .withNamedItem(KotlinFunction.newOneLineFunction("adjustWithConstant")
+                .withCodeLine("addConstant(a)")
+                .build())
+            .withNamedItem(KotlinType.newCompanionObject()
+                .withNamedItem(KotlinProperty.newVal("VALUE_TO_ADD")
+                    .withModifier(KotlinModifier.CONST)
+                    .withDataType("Int")
+                    .withInitializationString("42")
+                    .build())
+                .withNamedItem(KotlinFunction.newOneLineFunction("addConstant")
+                    .withArgument(KotlinArg.newArg("a").withDataType("Int").build())
+                    .withExplicitReturnType("Int")
+                    .withCodeLine("VALUE_TO_ADD + a")
+                    .build())
+                .build()
+            )
+            .build()
+
+        val renderedType = KotlinTypeRenderer().render(obj).stream()
+            .collect(Collectors.joining(System.getProperty("line.separator")))
+
+        assertThat(renderedType).isEqualToNormalizingNewlines("""
+            |data class Adder(
+            |    val a: Int
+            |) {
+            |    fun adjustWithConstant() =
+            |        addConstant(a)
+            |
+            |    companion object {
+            |        const val VALUE_TO_ADD: Int = 42
+            |
+            |        fun addConstant(a: Int): Int =
+            |            VALUE_TO_ADD + a
+            |    }
+            |}
+            """.trimMargin())
+    }
+
+    @Test
+    fun testRegularClassWithCompanionObjectAndConstVal() {
+        val obj = KotlinType.newClass("Adder")
+            .withConstructorProperty(KotlinProperty.newVal("a")
+                .withDataType("Int")
+                .build())
+            .withNamedItem(KotlinFunction.newOneLineFunction("adjustWithConstant")
+                .withCodeLine("addConstant(a)")
+                .build())
+            .withNamedItem(KotlinType.newCompanionObject()
+                .withNamedItem(KotlinProperty.newVal("VALUE_TO_ADD")
+                    .withModifier(KotlinModifier.CONST)
+                    .withDataType("Int")
+                    .withInitializationString("42")
+                    .build())
+                .withNamedItem(KotlinFunction.newOneLineFunction("addConstant")
+                    .withArgument(KotlinArg.newArg("a").withDataType("Int").build())
+                    .withExplicitReturnType("Int")
+                    .withCodeLine("VALUE_TO_ADD + a")
+                    .build())
+                .build()
+            )
+            .build()
+
+        val renderedType = KotlinTypeRenderer().render(obj).stream()
+            .collect(Collectors.joining(System.getProperty("line.separator")))
+
+        assertThat(renderedType).isEqualToNormalizingNewlines("""
+            |class Adder(
+            |    val a: Int
+            |) {
+            |    fun adjustWithConstant() =
+            |        addConstant(a)
+            |
+            |    companion object {
+            |        const val VALUE_TO_ADD: Int = 42
+            |
+            |        fun addConstant(a: Int): Int =
+            |            VALUE_TO_ADD + a
+            |    }
+            |}
+            """.trimMargin())
+    }
+
+    @Test
+    fun testRegularClassWithNamedCompanionObjectAndConstVal() {
+        val obj = KotlinType.newClass("Adder")
+            .withConstructorProperty(KotlinProperty.newVal("a")
+                .withDataType("Int")
+                .build())
+            .withNamedItem(KotlinFunction.newOneLineFunction("adjustWithConstant")
+                .withCodeLine("addConstant(a)")
+                .build())
+            .withNamedItem(KotlinType.newCompanionObject("Util")
+                .withNamedItem(KotlinProperty.newVal("VALUE_TO_ADD")
+                    .withModifier(KotlinModifier.CONST)
+                    .withDataType("Int")
+                    .withInitializationString("42")
+                    .build())
+                .withNamedItem(KotlinFunction.newOneLineFunction("addConstant")
+                    .withAnnotation("@JvmStatic")
+                    .withArgument(KotlinArg.newArg("a").withDataType("Int").build())
+                    .withExplicitReturnType("Int")
+                    .withCodeLine("VALUE_TO_ADD + a")
+                    .build())
+                .build()
+            )
+            .build()
+
+        val renderedType = KotlinTypeRenderer().render(obj).stream()
+            .collect(Collectors.joining(System.getProperty("line.separator")))
+
+        assertThat(renderedType).isEqualToNormalizingNewlines("""
+            |class Adder(
+            |    val a: Int
+            |) {
+            |    fun adjustWithConstant() =
+            |        addConstant(a)
+            |
+            |    companion object Util {
+            |        const val VALUE_TO_ADD: Int = 42
+            |
+            |        @JvmStatic
+            |        fun addConstant(a: Int): Int =
+            |            VALUE_TO_ADD + a
+            |    }
+            |}
             """.trimMargin())
     }
 }

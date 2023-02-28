@@ -18,11 +18,11 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.mybatis.generator</groupId>
   <artifactId>org.mybatis.generator.eclipse.parent</artifactId>
-  <version>1.4.1-SNAPSHOT</version>
+  <version>1.4.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2006</inceptionYear>
 
@@ -40,9 +40,9 @@
   </modules>
 
   <properties>
-    <tycho-version>2.7.0</tycho-version>
-    <tycho-extras-version>2.7.0</tycho-extras-version>
-    <license.version>4.2.rc2</license.version>
+    <tycho-version>3.0.1</tycho-version>
+    <tycho-extras-version>3.0.1</tycho-extras-version>
+    <license.version>4.2.rc3</license.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Sonar -->
@@ -52,14 +52,6 @@
     <sonar.jacoco.itReportPath>${project.basedir}/target/jacoco-it.exec</sonar.jacoco.itReportPath>
     <sonar.language>java</sonar.language>
   </properties>
-
-  <repositories>
-    <repository>
-      <id>Oldest Version Supporting Java 11</id>
-      <layout>p2</layout>
-      <url>http://download.eclipse.org/releases/2018-12</url>
-    </repository>
-  </repositories>
 
   <build>
     <pluginManagement>
@@ -100,26 +92,45 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-antrun-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.1.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.2.0</version>
         </plugin>
         <plugin>
           <groupId>org.eclipse.tycho</groupId>
           <artifactId>tycho-compiler-plugin</artifactId>
           <version>${tycho-version}</version>
           <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
+            <source>11</source>
+            <target>11</target>
           </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
     
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-toolchains-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <toolchains>
+            <jdk>
+              <version>11</version>
+            </jdk>
+          </toolchains>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>toolchain</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
@@ -179,7 +190,9 @@
         <artifactId>target-platform-configuration</artifactId>
         <version>${tycho-version}</version>
         <configuration>
-          <executionEnvironments>JavaSE-1.8</executionEnvironments>
+          <target>
+            <file>../releng/2021-06.target</file>
+          </target>
           <environments>
             <environment>
               <os>win32</os>
@@ -206,13 +219,18 @@
               <ws>cocoa</ws>
               <arch>x86_64</arch>
             </environment>
+            <environment>
+              <os>macosx</os>
+              <ws>cocoa</ws>
+              <arch>aarch64</arch>
+            </environment>
           </environments>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.6</version>
+        <version>0.8.8</version>
         <configuration>
           <append>true</append>
         </configuration>
